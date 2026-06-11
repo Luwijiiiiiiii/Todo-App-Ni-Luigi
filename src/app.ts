@@ -2,7 +2,7 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
-import { connectToMongo } from "./utils/mongo";
+import  prisma  from "./lib/prisma";
 import router from "./routes";
 import { isDev } from "./config";
 import setup from "./setup";
@@ -52,14 +52,12 @@ import events from "./events";
 
 events(io);
 
-// Connect to MongoDB
-connectToMongo()
+prisma.$connect()
   .then(() => {
-    // Run setup
+    console.log("Connected to the database");
     setup();
   })
-  .catch((err) => {
-    console.log(err);
+  .catch((error: unknown) => {
+    console.error("Error connecting to the database:", error);
   });
-
 export default server;
